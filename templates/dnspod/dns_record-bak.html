@@ -1,0 +1,147 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+    <style type="text/css">
+    </style>
+        <div class="col-md-10">
+            <div class="content-box-large">
+                <div class="panel-heading">
+                    <div class="panel-title">DNS管理</div>
+<!--
+                        <select class="form-control shift-info" id="selectdomain" onchange="getValue()">
+                            {% for domain in domains %}
+                              <option>{{ domain }}</option>
+                            { endfor %}
+                        </select>
+
+-->
+                    <div class="panel-options">
+                        <a href="" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+  					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover" id="conf_lists" width="100%">
+						<thead>
+							<tr>
+                                <th>域名</th>
+                                <th>CNAME</th>
+                                <th>QCLOUD</th>
+                                <th>UPYUN</th>
+
+							</tr>
+						</thead>
+						<tbody>
+                        {% for item in aa %}
+                            <tr>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.value }}</td>
+                                {% if item.is_active %}
+                                <td>启用</td>
+                                {% else %}
+                                <td>禁用</td>
+                                {% endif %}
+                                <td>
+                                    启用
+                                </td>
+                            </tr>
+                        {% endfor %}
+						</tbody>
+					</table>
+  				</div>
+  			</div>
+        </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+    $(".user-del").click(function(){
+        var user_id = $(this).attr('value');
+         swal({
+              title: "是否删除?",
+              text: "你确定需要删除这个用户吗？",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Confirm",
+              closeOnConfirm: false,
+              html: false,
+            }, function(){
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'UserDel' %}',
+                    data:{
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'user_id': user_id
+                    },
+                    success:function(callArg){
+                    if (callArg == 0) {
+                        swal("删除成功！", "该用户已删除成功", "success");
+                        setTimeout(function(){
+                            window.location.reload()}, 1200);
+                    }
+                    else{
+                        var err_msg = "删除失败!";
+                        swal("删除失败！", err_msg, "error");
+                    }
+                }
+                });
+        });
+    });
+
+
+$(function () {
+    var table = $('#conf_lists').dataTable({
+        "bInfo": true,
+        {#        "lengthChange": false,#}
+        {#        "bPaginate": false,#}
+        "iDisplayLength": 10,
+        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "searching": true,
+        "oLanguage": {//语言设置
+            "sLengthMenu": "每页显示  _MENU_ 条记录",
+            "sInfo": "从 _START_ 到 _END_，共 _TOTAL_ 条数据",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "前一页",
+                "sNext": "后一页",
+                "sLast": "尾页"
+            },
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered": "（数据库中共为 _MAX_ 条记录）",
+            "sSearch": "模糊查询："
+        }
+    });
+
+});
+
+$('.shift-info').editableSelect({
+            effects: 'slide',
+            onSelect: function (element) {
+　　　　　　　//$('.shift-info').attr({'data-val':element.val(),'placeholder':'请输入或选择域名..'});　
+　　　　　　　$('.shift-info').attr('data-val',element.val())　
+       }
+  }).prop('placeholder','请输入或选择域名...');
+
+function getValue() {
+    var str = $("#selectdomain").val();
+    var ccc = "ccc"
+    $.ajax({
+        type:'post',
+        dataType:'json',
+        url:'{% url 'Dnslist' %}',
+        data:{'select':str,csrfmiddlewaretoken: '{{ csrf_token }}'},
+        success:function (msg) {
+            if(msg){
+                alert(msg);
+            }
+
+        }
+    });
+
+}
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+    <style type="text/css">
+      .CodeMirror {border: 1px solid #cdcdcd; box-shadow: none;border-radius: 4px;}
+    </style>
+<div class="col-md-10">
+    <div class="content-box-large">
+        <div class="panel-heading">
+            <div class="panel-title">配置修改</div>
+            <div class="panel-options">
+              <a href="" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form action="" method="post">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label>项目</label>
+                        <select id="project" name="project" class="form-control">
+                            <option></option>
+                            {% for project_selected_obj in project_obj %}
+                                <option value={{ project_selected_obj.name }}>{{ project_selected_obj.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <br />
+                    </div>
+                    <label>配置内容</label>
+                    <div class="form-group">
+                        <textarea id="content"  name="content" class="form-control" rows="25" readonly></textarea>
+					</div>
+                    <div class="form-group">
+                            <button id="edit" class="btn btn-primary" type="button" disabled>Edit</button>
+                            <input id="submit" class="btn btn-primary" type="submit" value="Save" disabled>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script>
+    $("#project").select2({
+        theme: "bootstrap",
+        placeholder: "------"
+    });
+
+    $(function(){
+        $("#content").empty();
+        $("#project").change(function () {
+            $("#content").empty();
+            $('.CodeMirror').remove();
+            $("#edit").removeAttr("disabled");
+
+            var project_name = $("#project").val();
+        $.ajax({
+            type: "GET",
+            url: '{% url "conf_modify" %}',
+            dataType: 'json',
+            data: {
+                'value':1,
+                "project_name": project_name
+            },
+
+            success: function (arg) {
+                var editor = CodeMirror.fromTextArea($("#content")[0], {
+                    lineNumbers: true,
+                    lineWrapping: true,
+                    readOnly: true,
+                    theme: 'eclipse',
+                    mode: 'text/x-php',
+
+                });
+                editor.setValue(arg);
+                $("#edit").click(function (){
+                    editor.setOption('readOnly', false);
+                    $("#edit").attr("disabled", true);
+                    $("#submit").removeAttr("disabled");
+                });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+<div class="col-md-10">
+    <div class="content-box-large">
+        <div class="panel-heading">
+            <div class="panel-title">配置提交</div>
+            <div class="panel-options">
+              <a href="" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form action="" method="post">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label>项目名</label>
+						<input class="form-control" type="text" required>
+                    </div>
+                    <div class="form-group">
+					    <label>源地址</label>
+						<input class="form-control" type="text" required>
+					</div>
+                    <div class="form-group">
+					    <label>目的地址</label>
+						<input class="form-control" type="text" required>
+					</div>
+                    <div class="form-group">
+                        <label>配置类型</label>
+                        <select id="type" name="type" class="form-control">
+                            <option></option>
+                                <option value=>{{ project_one.name }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+					    <label>提交信息</label>
+						<textarea id="commit"  name="commit" class="form-control" rows="10" required></textarea>
+					</div>
+                    <div class="form-group">
+                            <input id="submit" class="btn btn-primary" type="submit" value="Submit">
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script src={% static  "select2/js/select2.min.js" %}></script>
+    <script>
+    $("#type").select2({
+        theme: "bootstrap",
+        placeholder: "------"
+    });
+    </script>
+{% endblock %}

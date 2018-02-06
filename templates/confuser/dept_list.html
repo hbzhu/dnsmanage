@@ -1,0 +1,105 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+    <style type="text/css">
+    </style>
+        <div class="col-md-10">
+            <div class="content-box-large">
+                <div class="panel-heading">
+                    <div class="panel-title">部门列表</div>
+                        <div class="float:left"> <a href="{% url 'DeptAdd' %}" class="btn btn-sm btn-primary "> 添加部门 </a></div>
+                    <div class="panel-options">
+                        <a href="" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+                    </div>
+                </div>
+                <div class="panel-body">
+  					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover" id="conf_lists" width="100%">
+						<thead>
+							<tr>
+                                <th>部门</th>
+                                <th>备注</th>
+                                <th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+                        {% for item in dept_obj %}
+                            <tr>
+                                <td><a href="/accounts/group/{{ item.id }}">{{ item.name }}</a></td>
+                                <td>{{ item.name }}</td>
+                                <td>
+                                    <a href="{% url 'DeptEdit' %}?gid={{ item.id }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-pencil"></i> 编辑</a>
+                                    <a class="btn btn-danger btn-xs user-del" value={{ item.id }}><i class="glyphicon glyphicon-trash"></i> 删除</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+						</tbody>
+					</table>
+  				</div>
+  			</div>
+        </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+    $(".user-del").click(function(){
+        var dept_id = $(this).attr('value');
+         swal({
+              title: "是否删除?",
+              text: "你确定需要删除这个用户吗？",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Confirm",
+              closeOnConfirm: false,
+              html: false,
+            }, function(){
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'DeptDel' %}',
+                    data:{
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'dept_id': dept_id
+                    },
+                    success:function(callArg){
+                    if (callArg == 0) {
+                        swal("删除成功！", "该用户已删除成功", "success");
+                        setTimeout(function(){
+                            window.location.reload()}, 1200);
+                    }
+                    else{
+                        var err_msg = "删除失败!";
+                        swal("删除失败！", err_msg, "error");
+                    }
+                }
+                });
+        });
+    });
+
+
+$(function () {
+    var table = $('#conf_lists').dataTable({
+        "bInfo": true,
+        {#        "lengthChange": false,#}
+        {#        "bPaginate": false,#}
+        "iDisplayLength": 10,
+        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "searching": true,
+        "oLanguage": {//语言设置
+            "sLengthMenu": "每页显示  _MENU_ 条记录",
+            "sInfo": "从 _START_ 到 _END_，共 _TOTAL_ 条数据",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "前一页",
+                "sNext": "后一页",
+                "sLast": "尾页"
+            },
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered": "（数据库中共为 _MAX_ 条记录）",
+            "sSearch": "模糊查询："
+        }
+    });
+
+});
+
+</script>
+{% endblock %}

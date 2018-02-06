@@ -1,0 +1,179 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+<style type="text/css">
+{#  .nav .open>a, .nav .open>a:hover, .nav .open>a:focus {border-color: #C4D6E6;}#}
+    .panel-title {margin-left: 7px;}
+    #commentForm label.error { font-style: italic; color: #ae0000}
+    .form-group { margin-top: 2%}
+    .panel-title {margin-left: 7px;}
+</style>
+<div class="col-md-10">
+    <div class="row">
+        <div class="col-md-11 panel-default">
+        <div class="content-box-header panel-heading">
+          <div class="panel-title">{{ domain }} 编辑信息</div>
+        </div>
+        <div class="content-box-large box-with-header">
+            <form id="commentForm" action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">主机记录</label>
+                        <div class="col-sm-10">
+						    <input id="record_name" class="form-control" name="record_name" type="text" required >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">类型</label>
+                        <div class="col-sm-10">
+						   <!-- <input id="record_type" class="form-control" name="record_type" type="text" required > -->
+                        <select id="record_type" class="form-control" name="record_type">
+                          <option>A</option>
+                          <option selected="selected">A</option>
+                          <option>CNAME</option>
+                          <option>MX</option>
+                            <option>TXT</option>
+                            <option>NS</option>
+                            <option>AAAA</option>
+                            <option>SRV</option>
+                        </select>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">线路</label>
+                        <div class="col-sm-10">
+						    <!-- <input id="record_line" class="form-control" name="record_line" type="text" required> -->
+                            <select id="record_type" class="form-control" name="record_type">
+                                  <option>默认</option>
+                                  <option selected="selected">默认</option>
+                                  <option>国内</option>
+                                  <option>国外</option>
+                                  <option>电信</option>
+                                  <option>联通</option>
+                                  <option>移动</option>
+                                  <option>教育网</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">记录值</label>
+                        <div class="col-sm-10">
+						    <input id="record_value" class="form-control" name="record_value" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">TTL</label>
+                        <div class="col-sm-10">
+						    <input id="record_ttl" class="form-control" name="record_ttl" type="text" value="600" required>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+{#                            <input id="submit" class="btn btn-primary" type="submit" value="创建">#}
+                        <hr style="width: 92%;margin-top: 5px;margin-right: 4%">
+                        <a id="save" class="btn btn-primary" style="margin-left: 92%">保存</a>
+                    </div>
+            </form>
+        </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script>
+  /*  $("[name='is_active']").bootstrapSwitch();
+
+  $('input[name="is_active"]').on('switchChange.bootstrapSwitch', function(event, state) {
+        $("#is_active").val(state);
+    });
+*/
+  /* $('#role').selectpicker('val', {{ user_selected_obj.role }});
+   $('#auth_category').selectpicker('val', {{ auth_category_list }});
+    $(function() {
+        if ($('#role').val() == 2) {
+            $('#auth-group').removeClass('hidden');
+        }
+        $("#role").change(function () {
+            if ($('#role').val() == 2) {
+                $('#auth-group').removeClass('hidden');
+            }
+            else {
+                $('#auth-group').addClass('hidden');
+            }
+
+        });
+    }); */
+
+
+    var $validator = $("#commentForm").validate({
+		  rules: {
+		      record_name:{
+		          required: true
+              },
+              record_type: {
+		        required: true
+              },
+                record_line: {
+		        required: true
+              },
+                record_value: {
+		        required: true
+              },
+                record_ttl: {
+		        required: true
+              }
+		    }
+
+		});
+
+    $("#save").click(function(){
+        var $valid = $("#commentForm").valid();
+                if (!$valid) {
+                    $validator.focusInvalid();
+                    return false;
+                }
+        swal({
+          title: "记录信息",
+          text: "你确定需要保存这些信息吗？",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Confirm",
+          closeOnConfirm: false,
+          html: false
+        }, function(){
+
+            $.ajax({
+                type:'POST',
+                url:'{% url 'DnsRecordAdd' %}',
+                data:{
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    'record_name': $("#record_name").val(),
+                    'record_type': $("#record_type").val(),
+                    'record_line': $("#record_line").val(),
+                    'record_value': $("#record_value").val(),
+                    'record_ttl': $("#record_ttl").val(),
+                    'domain_id': '{{ domain_id }}',
+                    'full_path':'{{ request.get_full_path }}'
+
+                },
+                success:function(callArg){
+                    if (callArg == 0) {
+                        swal("保存成功！", "记录信息已保存成功", "success");
+                        setTimeout(function(){
+                            location.href = "/dnspod/dnsrecord/?domain_id={{ domain_id }}"}, 1200);
+
+                    }
+                    else{
+                        var err_msg = "保存失败! 请检查记录是否有效。";
+                        swal("保存失败！", err_msg, "error");
+                    }
+
+                }
+            });
+        });
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% load mytag %}
+{% block  content%}
+<style type="text/css">
+    #commentForm label.error { font-style: italic; color: #ae0000}
+    .form-group { margin-top: 2%}
+    .panel-title {margin-left: 7px;}
+</style>
+<div class="col-md-10">
+    <div class="row">
+        <div class="col-md-11 panel-default">
+        <div class="content-box-header panel-heading">
+          <div class="panel-title">新增用户</div>
+        </div>
+        <div class="content-box-large box-with-header">
+            <form id="commentForm" action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">登陆名</label>
+                        <div class="col-sm-10">
+						    <input id="username" class="form-control" name="username" value="{{ user_selected_obj.username }}" type="text" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">用户姓名</label>
+                        <div class="col-sm-10">
+						    <input id="name" class="form-control" name="name" value="{{ user_selected_obj.name }}" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">用户邮箱</label>
+                        <div class="col-sm-10">
+						    <input id="email" class="form-control" name="email" value="{{ user_selected_obj.email }}" type="email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+					    <label class="col-sm-1 control-label">用户密码</label>
+                        <div class="col-sm-10">
+                            <input id="password1" class="form-control" name="password1" type="password" >
+                        </div>
+					</div>
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="users" class="col-sm-2 control-label">用户组</label>
+                                <div class="col-sm-3">
+                                    <select id="groups" name="groups" size="12" class="form-control m-b" multiple>
+                                        {% for group in group_all %}
+                                            {% if group.id|int2str in groups_str %}
+                                            <option value="{{ group.id }}" selected>{{ group.name }}</option>
+                                            {% else %}
+                                                <option value="{{ group.id }}">{{ group.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                    <div class="form-group" style="margin-bottom: 3%">
+                        <label  class="col-sm-1 control-label" style="margin-bottom: 10px">是否禁用</label>
+                        <div class="col-sm-10">
+                            <input id="is_active" type="checkbox" name="is_active" class="form-control" data-size="small">
+                        </div>
+                    </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="role" class="col-sm-2 control-label">权限<span class="red-fonts">*</span></label>
+                                <div class="col-sm-8">
+                                    {% for r, role_name in user_role.items %}
+                                    <div class="col-sm-3">
+                                        <div class="radio i-checks">
+                                            <label><input id="role" type="radio" value="{{ r }}" class="role" name="role" {% ifequal r 'CU' %}checked{% endifequal %}>{{ role_name }}</label>
+                                            <!--<label><input id="role" type="radio" value="{{ r }}" class="role" name="role" checked>{{ role_name }}</label>-->
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                    <div class="form-group">
+{#                            <input id="submit" class="btn btn-primary" type="submit" value="创建">#}
+                        <hr style="width: 92%;margin-top: 5px;margin-right: 4%">
+                        <a id="create" class="btn btn-primary" style="margin-left: 92%"> 保存</a>
+                    </div>
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script>
+    $("[name='is_active']").bootstrapSwitch();
+    $('input[name="is_active"]').on('switchChange.bootstrapSwitch', function(event, state) {
+        $("#is_active").val(state);
+    });
+
+
+    $("#create").click(function(){
+        var $valid = $("#commentForm").valid();
+        if (!$valid) {
+            $("#commentForm").validate().focusInvalid();
+            return false;
+        }
+         swal({
+              title: "是否创建?",
+              text: "你确定需要创建这个用户吗？",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Confirm",
+              closeOnConfirm: false,
+              html: false
+            }, function(){
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'UserEdit' %}',
+                    data:{
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'username': $('#username').val(),
+                        'name': $('#name').val(),
+                        'email': $('#email').val(),
+                        'password1': $('#password1').val(),
+                        'is_active': $("#is_active").val(),
+                        'groups': $('#groups').val(),
+                        'role': $("#role").val()
+
+                    },
+                    success:function(callArg){
+                    if (callArg == 0) {
+                        swal("创建成功！", "该用户已创建成功", "success");
+                        setTimeout(function(){
+                            location.href = "/accounts/list/"}, 1200);
+                    }
+                    else{
+                        var err_msg = "创建失败!";
+                        swal("创建失败！", err_msg, "error");
+                    }
+
+                }
+            });
+
+        });
+
+    });
+
+
+    </script>
+{% endblock %}

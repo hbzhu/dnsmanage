@@ -1,0 +1,76 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+<div class="col-md-10">
+    <div class="content-box-large">
+        <div class="panel-heading">
+            <div class="panel-title">配置回滚</div>
+
+            <div class="panel-options">
+              <a href="" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form action="" method="post">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label>项目</label>
+                        <select id="project" name="project" class="form-control">
+                            <option></option>
+                            {% for project_one in project_obj %}
+                                <option value={{ project_one.name }}>{{ project_one.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <br />
+                    </div>
+                    <div>
+                        <button id="popupProgressBootstrap" class="btn btn-primary" type="button">test</button>
+                        <input class="btn btn-primary" type="submit" value="Back">
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script src={% static  "vendors/select2/js/select2.min.js" %}></script>
+    <script src={% static  "lobibox/js/lobibox.js" %}></script>
+    <script src={% static  "lobibox/js/lobibox.min.js" %}></script>
+    <script>
+    $("#project").select2({
+        theme: "bootstrap",
+        placeholder: "------"
+    });
+    $(function () {
+        $('#popupProgressBootstrap').click(function () {
+                var inter;
+                Lobibox.progress({
+                    title: 'Please wait',
+                    label: '少女祈祷中...',
+                    progressTpl: '<div class="progress progress-striped active lobibox-progress-outer">\n\
+                    <div class="progress-bar progress-bar-info lobibox-progress-element" data-role="progress-text" role="progressbar"></div>\n\
+                    </div>',
+{#                    progressCompleted: function () {#}
+{#                        Lobibox.notify('success', {#}
+{#                            msg: 'Files were successfully uploaded'#}
+{#                        });#}
+{#                    },#}
+                    onShow: function ($this) {
+                        var i = 0;
+                        inter = setInterval(function () {
+{#                            window.console.log(i);#}
+                            if (i > 100) {
+                                clearInterval(inter);
+                            }
+                            i = i + 0.8;
+                            $this.setProgress(i);
+                        }, 1000 / 30);
+                    },
+                    closed: function () {
+                        inter = clearInterval(inter);
+                    }
+                });
+            });
+    });
+</script>
+{% endblock %}

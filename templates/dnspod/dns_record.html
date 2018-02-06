@@ -1,0 +1,158 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+    <style type="text/css" xmlns="http://www.w3.org/1999/html">
+    </style>
+        <div class="col-md-10">
+            <div class="content-box-large">
+
+                <div class="panel-heading">
+                    <div class="panel-title">DNS管理/{{ domain }}</div>
+
+                    <div class="float:left"> <a href="{% url 'DnsRecordAdd' %}?domain_id={{ domain_id }}" class="btn btn-sm btn-primary "> 添加记录 </a></div>
+                </div>
+            <form role="form" action=""  method="GET">
+            <div class="panel-body">
+
+                <div class="panel-options input-group col-md-3" style="margin-top:0px positon:relative">
+                <input type="hidden" name="domain_id" value ="{{ domain_id }}" />
+                <input type="text" class="form-control" name="keyword" value="{{ keyword }}" placeholder="默认只展示1000条，请输入记录名精确查找" style="width: 220px;/ >
+                    <span class="">
+                        <button class="btn btn-sm btn-primary"  type="submit" >查找</button>
+                    </span>
+                </div>
+            </div>
+            </form>
+                <div class="panel-body">
+  					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover" id="conf_lists" width="100%">
+						<thead>
+							<tr>
+                                <th>主机记录</th>
+                                <th>类型</th>
+                                <th>线路</th>
+                                <th>记录</th>
+                                <th>记录ID</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+
+							</tr>
+						</thead>
+						<tbody>
+                        {% for item in Record %}
+                            <tr>
+                          <!--      <td>{{ item.name }}</td>
+                                <td>{{ item.type }}</td>
+                                <td>{{ item.line }}</td>
+                                <td>{{ item.value }}</td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.ttl }}</td>
+                                {% if  item.status == 'enabled' %}
+                                    <td>启用</td>
+                                {% else %}
+                                    <td>禁用</td>
+                                {% endif %}
+                                <td>{{ item.updated_on }}</td> -->
+
+                                <td>{{ item.record }}</td>
+                                <td>{{ item.record_type }}</td>
+                                <td>{{ item.record_line }}</td>
+                                <td>{{ item.record_value }}</td>
+                                <td>{{ item.record_id }}</td>
+                                <td>{{ item.sync_time | date:"Y-m-d H:i:s" }}</td>
+
+                                <td>
+
+                                    <!--<a href="{% url 'DnsRecordEdit' %}?record_id={{ item.id }}&record_name={{ item.name }}&record_type={{ item.type }}&record_line={{ item.line }}&record_value={{ item.value }}&record_ttl={{ item.ttl }}&domain_id={{ domain_id }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-pencil"></i> 编辑</a>-->
+                                    <a href="{% url 'DnsRecordEdit' %}?record_id={{ item.record_id }}&record_name={{ item.record }}&record_type={{ item.record_type }}&record_line={{ item.record_line }}&record_value={{ item.record_value }}&domain_id={{ domain_id }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-pencil"></i> 编辑</a>
+                                     <a class="btn btn-danger btn-xs record_del" record_id={{ item.record_id }} domain_id={{ domain_id }} record_name={{ item.record }} record_value={{ item.record_value }} record_type={{ item.record_type }}><i class="glyphicon glyphicon-trash"></i> 删除</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+						</tbody>
+					</table>
+  				</div>
+  			</div>
+        </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+    $(".record_del").click(function(){
+        var record_id = $(this).attr('record_id');
+        var domain_id = $(this).attr('domain_id');
+        var record_name = $(this).attr('record_name');
+        var record_type = $(this).attr('record_type');
+        var record_value = $(this).attr('record_value');
+         swal({
+              title: "是否删除?",
+              text: "你确定需要删除这个记录吗？",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Confirm",
+              closeOnConfirm: false,
+              html: false,
+            }, function(){
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'DnsRecordDel' %}',
+                    data:{
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'record_id': record_id,
+                        'domain_id': domain_id,
+                        'record_name': record_name,
+                        'record_type': record_type,
+                        'record_value': record_value
+                    },
+                    success:function(callArg){
+                    if (callArg == 0) {
+                        swal("删除成功！", "该记录已删除成功", "success");
+                        setTimeout(function(){
+                            window.location.reload()}, 1200);
+                    }
+                    else{
+                        var err_msg = "删除失败!";
+                        swal("删除失败！", err_msg, "error");
+                    }
+                }
+                });
+        });
+    });
+
+
+$(function () {
+    var table = $('#conf_lists').dataTable({
+        "bInfo": true,
+        {#        "lengthChange": false,#}
+        {#        "bPaginate": false,#}
+        "iDisplayLength": 10,
+        "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        "searching": true,
+        "oLanguage": {//语言设置
+            "sLengthMenu": "每页显示  _MENU_ 条记录",
+            "sInfo": "从 _START_ 到 _END_，共 _TOTAL_ 条数据",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "前一页",
+                "sNext": "后一页",
+                "sLast": "尾页"
+            },
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered": "（数据库中共为 _MAX_ 条记录）",
+            "sSearch": "过滤："
+        }
+    });
+
+});
+
+$('.shift-info').editableSelect({
+            effects: 'slide',
+            onSelect: function (element) {
+　　　　　　　//$('.shift-info').attr({'data-val':element.val(),'placeholder':'请输入或选择域名..'});　
+　　　　　　　$('.shift-info').attr('data-val',element.val())　
+       }
+  }).prop('placeholder','请输入或选择域名...');
+
+</script>
+{% endblock %}

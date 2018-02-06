@@ -1,0 +1,254 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+<style type="text/css">
+    .nav-tabs {width: 96%; margin-bottom: 40px; margin-left: 10px}
+    .nav .open>a, .nav .open>a:hover, .nav .open>a:focus {border-color: #C4D6E6;}
+    .panel-title {margin-left: 7px;}
+    #commentForm label.error,  #CodeForm label.error{ font-style: italic; color: #ae0000}
+    .finish {margin-left: 85%}
+    #code-finish {margin-left: 93%}
+</style>
+<div class="col-md-10">
+    <div class="row">
+        <div class="col-md-11 panel-default">
+            <div class="content-box-header panel-heading">
+              <div class="panel-title ">WEB配置</div>
+            </div>
+            <div class="content-box-large box-with-header">
+                <form id="commentForm" class="form-horizontal" role="form">
+                <div id="rootwizard" class="tabbable tabs-left">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#web_nginx" data-toggle="tab">Nginx配置</a></li>
+                    <li><a href="#web_php" data-toggle="tab">PHP配置</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="web_nginx">
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">源地址</label>
+                                <div class="col-sm-10">
+                                  <input id="webnginx_src" name="webnginx_src" type="text" required class="form-control" value={{ webnginx_setting_obj.global_src_prefix }}>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">目的地址</label>
+                                <div class="col-sm-10">
+                                    <input id="webnginx_dst" name="webnginx_dst" type="text" required class="form-control" value={{ webnginx_setting_obj.global_dst_prefix }}>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">salt地址</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="width: 98%">
+                                        <span class="input-group-addon">salt://</span>
+                                        <input id="webnginx_salt" name="webnginx_salt" type="text" required class="form-control" value={{ webnginx_setting_obj.global_salt_prefix }}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">备份路径</label>
+                                <div class="col-sm-10">
+                                    <input id="webnginx_history" name="webnginx_history" type="text" required class="form-control" value={{ webnginx_setting_obj.global_history_prefix }}>
+                                </div>
+                            </div>
+                            <hr style="width: 96%;margin-top: 3%;margin-right: 3%">
+{#                            <a href="#" class="btn btn-info btn-sm webnginx-save" style="margin-left: 90%"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</a>#}
+                    </div>
+                    <div class="tab-pane fade" id="web_php">
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">源地址</label>
+                                <div class="col-sm-10">
+                                  <input id="webphp_src" name="webphp_src" type="text" required class="form-control" value={{ webphp_setting_obj.global_src_prefix }}>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">目的地址</label>
+                                <div class="col-sm-10">
+                                    <input id="webphp_dst" name="webphp_dst" type="text" required class="form-control" value={{ webphp_setting_obj.global_dst_prefix }}>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">salt地址</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="width: 98%">
+                                        <span class="input-group-addon">salt://</span>
+                                        <input id="webphp_salt" name="webphp_salt" type="text" required class="form-control" value={{ webphp_setting_obj.global_salt_prefix }}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">备份路径</label>
+                                <div class="col-sm-10">
+                                    <input id="webphp_history" name="webphp_history" type="text" required class="form-control" value={{ webphp_setting_obj.global_history_prefix }}>
+                                </div>
+                            </div>
+                            <hr style="width: 96%;margin-top: 3%;margin-right: 3%">
+{#                            <a href="#" class="btn btn-info btn-sm webphp-save" style="margin-left: 90%"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</a>#}
+                    </div>
+                    <ul class="pager wizard">
+                        <li class="previous col-sm-1"><a href="javascript:;">上一页</a></li>
+                    <div class="col-sm-11">
+                        <li class="next"><a href="javascript:;">下一页</a></li>
+                    </div>
+                    <li class="finish"><a href="javascript:;">提交</a></li>
+                    </ul>
+                </div>
+                </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-11 panel-default">
+            <div class="content-box-header panel-heading">
+              <div class="panel-title ">项目配置</div>
+            </div>
+            <div class="content-box-large box-with-header">
+                <form id="CodeForm" class="form-horizontal" role="form">
+                <div id="codewizard" class="tabbable tabs-left">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#code_php" data-toggle="tab">php项目</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="code_php">
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">源地址</label>
+                                <div class="col-sm-10">
+                                  <input id="codephp_src" name="codephp_src" type="text" required class="form-control" value={{ codephp_setting_obj.global_src_prefix }}>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">目的地址</label>
+                                <div class="col-sm-10">
+                                    <input id="codephp_dst" name="codephp_dst" type="text" required class="form-control" value={{ codephp_setting_obj.global_dst_prefix }}>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">salt地址</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="width: 98%">
+                                        <span class="input-group-addon">salt://</span>
+                                        <input id="codephp_salt" name="codephp_salt" type="text" required class="form-control" value={{ codephp_setting_obj.global_salt_prefix }}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">备份路径</label>
+                                <div class="col-sm-10">
+                                    <input id="codephp_history" name="codephp_history" type="text" required class="form-control" value={{ codephp_setting_obj.global_history_prefix }}>
+                                </div>
+                            </div>
+                            <hr style="width: 96%;margin-top: 3%;margin-right: 3%">
+                    </div>
+                </div>
+                    <ul class="pager wizard">
+                    <li id="code-finish" class="finish"><a href="javascript:;">提交</a></li>
+                    </ul>
+                </div>
+                </div>
+                </form>
+            </div>
+        </div>
+
+{#        <div class="col-md-11 panel-default">#}
+{#            <div class="content-box-header panel-heading">#}
+{#              <div class="panel-title ">DB配置</div>#}
+{#            </div>#}
+{#            <div class="content-box-large box-with-header">#}
+{#                <h3 style="font-style: italic">Coming Soon...</h3>#}
+{#                <form class="form-horizontal" role="form">#}
+{#                    <div class="form-group">#}
+{#                        <label class="col-sm-1 control-label">源地址</label>#}
+{#                        <div class="col-sm-10">#}
+{#                          <input type="text" class="form-control">#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="form-group">#}
+{#                        <label class="col-sm-1 control-label">目的地址</label>#}
+{#                        <div class="col-sm-10">#}
+{#                            <input type="text" class="form-control">#}
+{##}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <hr style="width: 90%;margin-top: 3%">#}
+{#                    <a href="#" class="btn btn-primary btn-sm" style="margin-left: 90%"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</a>#}
+{#                </form>#}
+{#            </div>#}
+{#        </div>#}
+</div>
+{% endblock %}
+{% block js %}
+    <script>
+    var $validator = $("#commentForm").validate();
+    var $validator2 = $("#CodeForm").validate();
+    $('#rootwizard').bootstrapWizard({
+	  		'tabClass': 'nav nav-tabs',
+            'onTabChange': function(tab, navigation, index) {
+                var $valid = $("#commentForm").valid();
+                if (!$valid) {
+                    $validator.focusInvalid();
+                    return false;
+                }
+            }
+	  	});
+    $('#rootwizard .finish').click(function(){
+        var $valid = $("#commentForm").valid();
+                if (!$valid) {
+                    $validator.focusInvalid();
+                    return false;
+                }
+
+        swal({
+          title: "保存设置",
+          text: "设置已保存",
+          type: "success",
+          html: false
+        }, function(){
+            $.ajax({
+                type:'POST',
+                url:'{% url 'global_setting' %}',
+                data:{
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    'webnginx_name': 'web-nginx',
+                    'webphp_name': 'web-php',
+                    'webnginx_src': $("#webnginx_src").val(),
+                    'webnginx_dst': $("#webnginx_dst").val(),
+                    'webnginx_salt': $("#webnginx_salt").val(),
+                    'webnginx_history': $("#webnginx_history").val(),
+                    'webphp_src': $("#webphp_src").val(),
+                    'webphp_dst': $("#webphp_dst").val(),
+                    'webphp_salt': $("#webphp_salt").val(),
+                    'webphp_history': $("#webphp_history").val()
+                }
+            });
+        });
+    });
+
+    $('#codewizard .finish').click(function(){
+        var $valid2 = $("#CodeForm").valid();
+                if (!$valid2) {
+                    $validator2.focusInvalid();
+                    return false;
+                }
+
+        swal({
+          title: "保存设置",
+          text: "设置已保存",
+          type: "success",
+          html: false
+        }, function(){
+            $.ajax({
+                type:'POST',
+                url:'{% url 'global_setting' %}',
+                data:{
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    'codephp_name': 'code-php',
+                    'codephp_src': $("#codephp_src").val(),
+                    'codephp_dst': $("#codephp_dst").val(),
+                    'codephp_salt': $("#codephp_salt").val(),
+                    'codephp_history': $("#codephp_history").val()
+                }
+            });
+        });
+    });
+    </script>
+{% endblock %}

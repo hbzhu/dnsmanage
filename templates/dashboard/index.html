@@ -1,0 +1,187 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+<div class="col-md-10">
+        <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-success pull-right">Users</span>
+                    <h5>用户总数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins"><a href="{% url 'UserList' %}">{{ users}}</a></h1>
+                    <small>All user</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-success pull-right">Groups</span>
+                    <h5>用户组总数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins"><a href="{% url 'DeptList' %}">{{ usergroupcount}}</a></h1>
+                    <small>All group</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-success pull-right">Domains</span>
+                    <h5>域名总数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins"><a href="{% url 'DomLst' %}">{{ domaincount}}</a></h1>
+                    <small>All domain</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-success pull-right">Records</span>
+                    <h5>解析记录总数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins"><a href="{% url 'LdnsRecord' %}">{{ records }}</a></h1>
+                    <small>All record</small>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    <div class="row">
+    <div class="content-box-large">
+        <div class="">
+        </div>
+        <div class="panel-body">
+            <div id="main" style="width: auto;height:600px;"></div>
+        </div>
+    </div>
+
+        <div class="col-sm-2 border-bottom white-bg dashboard-header" style="margin-left:15px;height: 346px">
+            <h2>最近登陆用户</h2>
+
+            <ul class="list-group clear-list m-t">
+                {% for data in user_top_five %}
+                    <li class="list-group-item fist-item">
+                        <span class="pull-right">
+                            {{ data.last_login | date:"Y-m-d H:i:s"}}
+                        </span>
+                         {{ data.username }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        var myChart = echarts.init(document.getElementById('main'));
+        var op_name = {{ optype_json|safe }}
+        var op_data = {{ opdata_json|safe }}
+    var option = {
+        title : {
+            text: 'DNS操作汇总',
+            subtext: '增删改占用图表',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: op_name
+        },
+        series : [
+            {
+                name: '操作',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data: op_data,
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    /*
+    var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title : {
+                text: '操作汇总',
+                textStyle: {
+                    fontSize: 22,
+                    fontStyle: 'italic',
+                    fontWeight: 'normal'
+                }
+{#                subtext: '纯属虚构'#}
+            },
+            color: ['#3398DB'],
+            tooltip : {
+                trigger: 'axis'
+            },
+            legend: {
+                data:['总提交数']
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: true},
+                    magicType : {show: true, type: ['bar', 'line']},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            xAxis : [
+                {
+                    type : 'category',
+                   boundaryGap : false,
+                    data : ["新增","修改","删除","切换"]
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    axisLabel : {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series : [
+                {
+                    name:'操作次数',
+                    type:'line',
+                    data:{{ asset_count|safe }},
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        */
+
+    </script>
+{% endblock %}

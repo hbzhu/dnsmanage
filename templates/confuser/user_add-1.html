@@ -1,0 +1,160 @@
+{% extends 'dashboard/base.html' %}
+{% load staticfiles %}
+{% block  content%}
+<style type="text/css">
+    #commentForm label.error { font-style: italic; color: #ae0000}
+    .form-group { margin-top: 2%}
+    .panel-title {margin-left: 7px;}
+</style>
+<div class="col-md-10">
+    <div class="row">
+        <div class="col-md-11 panel-default">
+        <div class="content-box-header panel-heading">
+          <div class="panel-title">新增用户</div>
+        </div>
+        <div class="content-box-large box-with-header">
+            <form id="commentForm" action="" method="post" class="form-horizontal">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">登陆名</label>
+                        <div class="col-sm-10">
+						    <input id="username" class="form-control" name="username" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">用户姓名</label>
+                        <div class="col-sm-10">
+						    <input id="name" class="form-control" name="name" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">用户邮箱</label>
+                        <div class="col-sm-10">
+						    <input id="email" class="form-control" name="email" type="email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+					    <label class="col-sm-1 control-label">用户密码</label>
+                        <div class="col-sm-10">
+                            <input id="password1" class="form-control" name="password1" type="password" required>
+                        </div>
+					</div>
+                    <div class="form-group">
+					    <label class="col-sm-1 control-label">确认密码</label>
+                        <div class="col-sm-10">
+                            <input id="password2" class="form-control" name="password2" type="password" required>
+                        </div>
+					</div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="groups" class="col-sm-2 control-label">用户组</label>
+                                <div class="col-sm-8">
+                                    <select id="groups" name="groups" class="form-control m-b" multiple size="12">
+                                        {% for group in group_all %}
+                                            {% if forloop.first %}
+                                                <option value="{{ group.id }}" selected>{{ group.name }}</option>
+                                            {% else %}
+                                                <option value="{{ group.id }}">{{ group.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                    <div class="form-group" style="margin-bottom: 3%">
+                        <label  class="col-sm-1 control-label" style="margin-bottom: 10px">是否禁用</label>
+                        <div class="col-sm-10">
+                            <input id="is_active" type="checkbox" name="is_active" class="form-control" data-size="small">
+                        </div>
+                    </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="role" class="col-sm-2 control-label" >权限<span class="red-fonts">*</span></label>
+                                <div class="col-sm-8" >
+                                    <div class="col-sm-3">
+                                        <div class="" >
+                                            <label><input   type="radio" value="CU"  name="role" checked="checked" > 普通用户 </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="" >
+                                            <label><input   type="radio" value="GA"  name="role" > 部门管理员 </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="" >
+                                            <label><input   type="radio" value="SU"  name="role"   > 超级管理员 </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    <div class="form-group">
+{#                            <input id="submit" class="btn btn-primary" type="submit" value="创建">#}
+                        <hr style="width: 92%;margin-top: 5px;margin-right: 4%">
+                        <a id="create" class="btn btn-primary" style="margin-left: 92%"> 创建</a>
+                    </div>
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script>
+    $("[name='is_active']").bootstrapSwitch();
+    $('input[name="is_active"]').on('switchChange.bootstrapSwitch', function(event, state) {
+        $("#is_active").val(state);
+    });
+
+
+
+    $("#create").click(function(){
+        var $valid = $("#commentForm").valid();
+        var user_role = $("input[name='role']:checked").serialize();
+        if (!$valid) {
+            $("#commentForm").validate().focusInvalid();
+            return false;
+        }
+         swal({
+              title: "是否创建?",
+              text: "你确定需要创建这个用户吗？",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Confirm",
+              closeOnConfirm: false,
+              html: false
+            }, function(){
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'UseraAdd' %}',
+                    data:{
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'username': $('#username').val(),
+                        'name': $('#name').val(),
+                        'email': $('#email').val(),
+                        'password1': $('#password1').val(),
+                        'password2': $('#password2').val(),
+                        'is_active': $("#is_active").val(),
+                        'groups': $('#groups').val(),
+                        'role': user_role.split('=')[1]
+
+                    },
+                    success:function(callArg){
+                    if (callArg == 0) {
+                        swal("创建成功！", "该用户已创建成功", "success");
+                        setTimeout(function(){
+                            location.href = "/accounts/list/"}, 1200);
+                    }
+                    else{
+                        var err_msg = "创建失败!";
+                        swal("创建失败！", err_msg, "error");
+                    }
+
+                }
+            });
+
+        });
+
+    });
+    </script>
+{% endblock %}

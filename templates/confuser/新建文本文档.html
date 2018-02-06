@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>单选框radio绑定click事件</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<script type="text/javascript" src="jquery-1.8.2.min.js"></script>
+<script type="text/javascript">
+ $(function(){
+  $(":radio").click(function(){
+   alert("您是..." + $(this).val());
+  });
+ });
+</script>
+<style type="text/css">
+h5{color:blue;}
+textarea{resize:none;}
+#word{color:red;}
+</style>
+</head>
+<body>
+<h5>单选框 radio 绑定 click 事件</h5>
+<form action="" method="">
+ <input type="radio" name="gender" value="男性">男性
+ <input type="radio" name="gender" value="女性">女性
+ <input type="radio" name="gender" value="春哥">春哥
+</form>
+</body>
+</html>

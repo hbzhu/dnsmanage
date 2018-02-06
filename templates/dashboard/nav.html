@@ -1,0 +1,83 @@
+<div class="col-md-2">
+<div class="sidebar content-box" style="display: block;">
+    <ul class="nav">
+        <!-- Main menu -->
+        {% if '/' in request.path  %}
+            <li class="current"><a href="/"><i class="glyphicon glyphicon-dashboard"></i> 总览</a></li>
+        {% else %}
+            <li><a href="/"><i class="glyphicon glyphicon-dashboard"></i> 总览</a></li>
+        {% endif %}
+
+            {% if '/accounts/profile/' in request.path or '/accounts/list/' in request.path or '/accounts/add/' in request.path %}
+                <li class="submenu open">
+            {% else %}
+                <li class="submenu">
+            {% endif %}
+            <a href="">
+                <i class="glyphicon glyphicon-user"></i> 用户管理
+                <span class="caret pull-right"></span>
+            </a>
+                <!-- Sub menu -->
+                <ul>
+
+                    {% if '/accounts/profile/' in request.path  %}
+                        <li class="current"><a href="/accounts/profile/"> 我的账户</a></li>
+                        <li><a href="/accounts/list/"> 用户列表</a></li>
+                        <li><a href="/accounts/deptlist/"> 部门列表</a></li>
+                    {% elif '/accounts/list/' in  request.path %}
+                        <li><a href="/accounts/profile/"> 我的账户</a></li>
+                        <li class="current"><a href="/accounts/list/"> 用户列表</a></li>
+                        <li><a href="/accounts/deptlist/"> 部门列表</a></li>
+                    {% else %}
+                        <li><a href="/accounts/profile/"> 我的账户</a></li>
+                        <li><a href="/accounts/list/"> 用户列表</a></li>
+                        <li><a href="/accounts/deptlist/"> 部门列表</a></li>
+                    {% endif %}
+                </ul>
+
+
+
+    <!-- start -->
+            {% if '/dnspod/domlist/' in request.path %}
+                <li class="submenu open">
+            {% else %}
+                <li class="submenu">
+            {% endif %}
+            <a href="">
+                <i class="glyphicon glyphicon-wrench"></i> DNS管理
+                <span class="caret pull-right"></span>
+            </a>
+                <!-- Sub menu -->
+                <ul>
+                    {% if '/dnspod/domlist/' in request.path  %}
+                        <li class="current"><a href="/dnspod/domlist/"> DNS列表</a></li>
+                        <li><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
+                        <li><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li><a href="/dnspod/oplog/"> 操作记录</a></li>
+                    {% elif '/dnspod/ldnsrecord/' in  request.path %}
+                        <li><a href="/dnspod/domlist/"> DNS列表</a></li>
+                        <li class="current"><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
+                        <li><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li><a href="/dnspod/oplog/"> 操作记录</a></li>
+                    {% elif '/dnspod/oplog/' in  request.path %}
+                        <li><a href="/dnspod/domlist/"> DNS列表</a></li>
+                        <li><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
+                        <li><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li class="current"><a href="/dnspod/oplog/"> 操作记录</a></li>
+                    {% elif '/dnspod/cdnrecord/' in  request.path %}
+                        <li><a href="/dnspod/domlist/"> DNS列表</a></li>
+                        <li><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
+                        <li class="current"><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li><a href="/dnspod/oplog/"> 操作记录</a></li>
+                    {% else %}
+                        <li><a href="/dnspod/domlist/"> DNS列表</a></li>
+                        <li><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
+                        <li><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li><a href="/dnspod/oplog/"> 操作记录</a></li>
+                    {% endif %}
+                </ul>
+
+
+    </ul>
+ </div>
+</div>
