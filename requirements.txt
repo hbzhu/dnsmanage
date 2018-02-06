@@ -1,0 +1,7 @@
+Django==1.10
+django-bootstrap-form==3.2.1
+django-crontab==0.7.1
+MySQL-python==1.2.5
+requests==2.18.4
+uuid==1.30
+uWSGI==2.0.15
