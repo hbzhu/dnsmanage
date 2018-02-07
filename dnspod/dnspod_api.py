@@ -290,4 +290,6 @@ if __name__ == "__main__":
     #print aa.get_domain('37784273')
     #print aa.record_add("37784273", "test8", "CNAME", "www.baidu.com")
     #print len(aa.Get_Record('207395'))
-    print aa.record_id('2144.cn','xxzb')
+    #print aa.record_id('2144.cn','xxzb')
+    domlst = aa.get_domainlist()
+    print domlst

@@ -31,6 +31,11 @@ def dnspodSync():
     try:
         domlst = dnsp.get_domainlist()
         Dnspod_records.objects.filter().delete()
+        Dnspod_domains.objects.filter().delete()
+        new_domlst = []
+        for dlst in domlst:
+            new_domlst.append(Dnspod_domains(domain_id=dlst["id"],domain=dlst["name"]))
+        Dnspod_domains.objects.bulk_create(new_domlst)
         for v in domlst:
             print v
             domain_id = v["id"]

@@ -49,6 +49,7 @@ urlpatterns = [
     url(r'^dnspod/dnsrecordsync/$', DnspodView.DnsRecordSync, name='DnsRecordSync'),
     url(r'^dnspod/cdnsync/$', DnspodView.CdnSync, name='CdnSync'),
     url(r'^dnspod/cdnrecord/$', DnspodView.CdnRcord, name='CdnRcord'),
+    url(r'^dnspod/cdndetail/$', DnspodView.CDNDetail,name='CDNDetail'),
 
     url(r'^dnspod/oplog/', DnspodView.Dnsoplog, name='Dnsoplog'),
 ]

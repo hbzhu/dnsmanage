@@ -288,6 +288,22 @@ def CdnRcord(request):
     return render(request,'dnspod/cdn_record.html',locals())
 
 
+def CDNDetail(request):
+
+    if request.method == 'GET':
+        try:
+            record = request.GET.get('record_name','')
+            domain = request.GET.get('domain','')
+            if record.startswith('*.'):
+                record = record.replace('*.','')
+            full_domain = record+'.'+domain
+            record_obj = Dnspod_cdnrecords.objects.filter(full_domain=full_domain)
+            record_obj = record_obj[0]
+        except Exception,e:
+            print e
+        return  render(request,'dnspod/cdnrecord_detail.html',locals())
+
+
 @login_required
 def Dnsoplog(request):
     obj = Log_dnspod_config.objects.all().order_by("create_time")
