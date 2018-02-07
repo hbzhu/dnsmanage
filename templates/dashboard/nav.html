@@ -51,28 +51,28 @@
                 <ul>
                     {% if '/dnspod/domlist/' in request.path  %}
                         <li class="current"><a href="/dnspod/domlist/"> DNS列表</a></li>
-                        <li><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
-                        <li><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li><a href="/dnspod/ldnsrecord/"> DNS切换</a></li>
+                        <li><a href="/dnspod/cdnrecord/"> 加速域名</a></li>
                         <li><a href="/dnspod/oplog/"> 操作记录</a></li>
                     {% elif '/dnspod/ldnsrecord/' in  request.path %}
                         <li><a href="/dnspod/domlist/"> DNS列表</a></li>
-                        <li class="current"><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
-                        <li><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li class="current"><a href="/dnspod/ldnsrecord/"> DNS切换</a></li>
+                        <li><a href="/dnspod/cdnrecord/"> 加速域名</a></li>
                         <li><a href="/dnspod/oplog/"> 操作记录</a></li>
                     {% elif '/dnspod/oplog/' in  request.path %}
                         <li><a href="/dnspod/domlist/"> DNS列表</a></li>
-                        <li><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
-                        <li><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li><a href="/dnspod/ldnsrecord/"> DNS切换</a></li>
+                        <li><a href="/dnspod/cdnrecord/"> 加速域名</a></li>
                         <li class="current"><a href="/dnspod/oplog/"> 操作记录</a></li>
                     {% elif '/dnspod/cdnrecord/' in  request.path %}
                         <li><a href="/dnspod/domlist/"> DNS列表</a></li>
-                        <li><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
-                        <li class="current"><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li><a href="/dnspod/ldnsrecord/"> DNS切换</a></li>
+                        <li class="current"><a href="/dnspod/cdnrecord/"> 加速域名</a></li>
                         <li><a href="/dnspod/oplog/"> 操作记录</a></li>
                     {% else %}
                         <li><a href="/dnspod/domlist/"> DNS列表</a></li>
-                        <li><a href="/dnspod/ldnsrecord/"> DNS快速切换</a></li>
-                        <li><a href="/dnspod/cdnrecord/"> CDN加速域名</a></li>
+                        <li><a href="/dnspod/ldnsrecord/"> DNS切换</a></li>
+                        <li><a href="/dnspod/cdnrecord/"> 加速域名</a></li>
                         <li><a href="/dnspod/oplog/"> 操作记录</a></li>
                     {% endif %}
                 </ul>
