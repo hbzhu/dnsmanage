@@ -4,4 +4,4 @@ config.ini
 *.log
 *.ini
 *.rar
-
+.gitignore
