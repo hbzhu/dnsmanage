@@ -4,8 +4,9 @@ __author__ = 'Frank'
 __mtime__ = '2018/1/18'
 """
 import dnspod_api,qcloud_api,upyun_api
-from models import Dnspod_domains,Dnspod_records,Dnspod_cdnrecords
+from models import Dnspod_domains,Dnspod_records,Dnspod_cdnrecords,Dnspod_stat
 import time
+import MysqlHandle
 
 def CdnSync():
     print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -44,6 +45,12 @@ def dnspodSync():
             for line in record:
                 record_lst.append(Dnspod_records(record_id=line["id"], record=line["name"], record_type=line["type"],domain_id_id=domain_id,record_value=line["value"]))
             Dnspod_records.objects.bulk_create(record_lst)
+        sql = """insert into dnsmanagev2.dnspod_stat (domain,record_count)  select b.domain ,count(a.domain_id_id) as record_count from dnsmanagev2.dnspod_records a join  dnsmanagev2.dnspod_domains b  on a.domain_id_id=b.domain_id  group by a.domain_id_id;"""
+        db = MysqlHandle.database()
+        db.update(sql)
+        db.close()
+
+
     except Exception,e:
         print e
 

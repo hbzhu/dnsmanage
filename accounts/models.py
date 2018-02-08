@@ -59,5 +59,20 @@ class Logs(models.Model):
         verbose_name = '用户信息操作记录表'
         verbose_name_plural = '用户信息操作记录表'
 
+class Loginlog(models.Model):
+    FLAG = (
+              (0,'失败'),
+              (1,'成功'),
+              )
+    user = models.CharField(max_length=50, verbose_name='登录用户', default=None)
+    login_from = models.GenericIPAddressField(default=None,blank=True, null=True,verbose_name='登录IP')
+    status = models.IntegerField(choices=FLAG,default=0,verbose_name='登录状态')
+    login_time = models.DateTimeField(auto_now_add=True,verbose_name='登录时间')
+
+    class Meta:
+        db_table = 'dnspord_loginlog'
+        verbose_name = '用户登录信息记录表'
+        verbose_name_plural = '用户登录信息记录表'
+
 
 

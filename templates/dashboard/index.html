@@ -61,6 +61,15 @@
             <div id="main" style="width: auto;height:600px;"></div>
         </div>
     </div>
+    <!-- test -->
+        <div class="content-box-large">
+        <div class="">
+        </div>
+        <div class="panel-body">
+            <div id="main1" style="width: auto;height:600px;"></div>
+        </div>
+    </div>
+
 
         <div class="col-sm-2 border-bottom white-bg dashboard-header" style="margin-left:15px;height: 346px">
             <h2>最近登陆用户</h2>
@@ -118,9 +127,6 @@
             }
         ]
     };
-
-
-
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
     /*
@@ -182,6 +188,62 @@
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
         */
+    var myChart1 = echarts.init(document.getElementById('main1'));
+    var domains = {{ dlst |safe}}
+    var record_count = {{ dcount |safe }}
+    var option1 = {
+    title : {
+        text: '域名记录数据汇总',
+        subtext: '各域名记录'
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['记录数']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    xAxis : [
+        {
+            type : 'category',
+            data : domains
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value'
+        }
+    ],
+    series : [
+        {
+            name:'记录数',
+            type:'bar',
+            data: record_count,
+            markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name: '平均值'}
+                ]
+            }
+        }
+    ]
+};
+    myChart1.setOption(option1);
 
     </script>
 {% endblock %}

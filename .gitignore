@@ -1,1 +1,7 @@
 config.ini
+.git
+.idea
+*.log
+*.ini
+*.rar
+

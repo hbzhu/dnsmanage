@@ -79,6 +79,30 @@ class Dnspod_cdnrecords(models.Model):
             ("can_del_dnspod_cdnrecords", "删除dnspod_cdnrecords权限"),
         )
 
+class Dnspod_stat(models.Model):
+    domain = models.CharField(max_length=64)
+    date_time = models.DateTimeField(auto_now_add=True, verbose_name=u"记录时间")
+    record_count = models.IntegerField()
+
+    def __unicode__(self):
+        return self.domain
+
+    class Meta:
+        db_table = 'dnspod_stat'
+        verbose_name = '记录汇总表'
+        verbose_name_plural = '记录汇总表'
+        permissions = (
+            ("can_read_dnspod_stat","查看dnspod_stat权限"),
+            ("can_change_dnspod_stat", "更改dnspod_stat权限"),
+            ("can_add_dnspod_stat", "添加dnspod_stat权限"),
+            ("can_del_dnspod_stat", "删除dnspod_stat权限"),
+        )
+
+
+
+
+
+
 
 
 

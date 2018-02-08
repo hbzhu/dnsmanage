@@ -26,12 +26,13 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required,permission_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
-from accounts.models import User
+from accounts.models import User,Loginlog
 from Log.models import Log_dnspod_config
-from dnspod.models import Dnspod_domains,Dnspod_records,Dnspod_cdnrecords
+from dnspod.models import Dnspod_domains,Dnspod_records,Dnspod_cdnrecords,Dnspod_stat
 from django.core.urlresolvers import reverse
 import uuid
 import logging
+import time,datetime
 
 logger = logging.getLogger('myproject')
 
@@ -39,19 +40,42 @@ def UserLogin(request):
     if request.session.get('username') is not None:
         return HttpResponseRedirect('/', {"user": request.user})
     else:
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = auth.authenticate(username=username, password=password)
-        if user and user.is_active:
-            auth.login(request, user)
-            request.session['username'] = username
-            return HttpResponseRedirect('/accounts/center/')
-        else:
-            if request.method == "POST":
-                emsg = u"认证失败"
-                return render(request,'dashboard/login.html',locals())
+        try:
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            try:
+                client_ip = request.META['HTTP_X_FORWARDED_FOR']
+                client_ip = client_ip.split(',')[0]
+                print client_ip
+            except:
+                try:
+                    client_ip = request.META['REMOTE_ADDR']
+                except:
+                    client_ip = ""
+            print client_ip
+            user = auth.authenticate(username=username, password=password)
+            if user and user.is_active:
+                auth.login(request, user)
+                request.session['username'] = username
+                status = 1
+                Loginlog_obj = Loginlog.objects.create(user=username,status=status,login_from=client_ip)
+                Loginlog_obj.save()
+
+                return HttpResponseRedirect('/accounts/center/')
             else:
-                return render(request, 'dashboard/login.html', locals())
+                if request.method == "POST":
+                    emsg = u"认证失败"
+                    status = 0
+                    Loginlog_obj = Loginlog.objects.create(user=username, status=status,login_from=client_ip)
+                    Loginlog_obj.save()
+                    print "+++++++++++++"
+                    print emsg
+                    return render(request,'dashboard/login.html',locals())
+                else:
+                    return render(request, 'dashboard/login.html', locals())
+        except Exception,e:
+            print e
+        return render(request, 'dashboard/login.html', locals())
 
 
 def Logout(request):
@@ -64,15 +88,17 @@ def center(request):
     asset_type = [0, 1, 2, 3]
     op = ["新增","修改","删除","切换"]
     dict = {"新增":0,"修改":1,"删除":2,"切换":3}
+    now_time = datetime.datetime.now()
+    yes_time = now_time + datetime.timedelta(days=-1)
+    #today = time.strftime('%Y-%m-%d',time.localtime(time.time()))
     try:
+        stat_obj = Dnspod_stat.objects.filter(date_time__gt=yes_time)
         assets = Log_dnspod_config.objects.all()
         domaincount = Dnspod_domains.objects.count()
         users = User.objects.count()
         usergroupcount = Group.objects.count()
         records = Dnspod_records.objects.count()
-
         user_top_five = User.objects.all().order_by('-last_login')[:5]
-
         lst = []
         for k,v in dict.items():
             opdata = {}
@@ -82,6 +108,13 @@ def center(request):
             lst.append(opdata)
         optype_json = json.dumps(op)
         opdata_json = json.dumps(lst)
+        dlst = []
+        dcount = []
+        for line in stat_obj:
+            dlst.append(str(line.domain))
+            dcount.append(str(line.record_count))
+        print dlst
+        print dcount
     except Exception,e:
         print e
 
