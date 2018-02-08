@@ -32,8 +32,8 @@ from dnspod.models import Dnspod_domains,Dnspod_records,Dnspod_cdnrecords,Dnspod
 from django.core.urlresolvers import reverse
 import uuid
 import logging
-import time,datetime
-
+import time
+from django.utils import timezone as datetime
 logger = logging.getLogger('myproject')
 
 def UserLogin(request):
@@ -90,6 +90,7 @@ def center(request):
     dict = {"新增":0,"修改":1,"删除":2,"切换":3}
     now_time = datetime.datetime.now()
     yes_time = now_time + datetime.timedelta(days=-1)
+    print yes_time
     #today = time.strftime('%Y-%m-%d',time.localtime(time.time()))
     try:
         stat_obj = Dnspod_stat.objects.filter(date_time__gt=yes_time)
@@ -98,7 +99,7 @@ def center(request):
         users = User.objects.count()
         usergroupcount = Group.objects.count()
         records = Dnspod_records.objects.count()
-        user_top_five = User.objects.all().order_by('-last_login')[:5]
+        user_top_five =Loginlog.objects.all().order_by('-login_time')[:5]
         lst = []
         for k,v in dict.items():
             opdata = {}
@@ -113,8 +114,7 @@ def center(request):
         for line in stat_obj:
             dlst.append(str(line.domain))
             dcount.append(str(line.record_count))
-        print dlst
-        print dcount
+
     except Exception,e:
         print e
 

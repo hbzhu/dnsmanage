@@ -77,10 +77,7 @@
             <ul class="list-group clear-list m-t">
                 {% for data in user_top_five %}
                     <li class="list-group-item fist-item">
-                        <span class="pull-right">
-                            {{ data.last_login | date:"Y-m-d H:i:s"}}
-                        </span>
-                         {{ data.username }}
+                         {{ data.user }} {{ data.login_from }} {{ data.login_time | date:"Y-m-d H:i:s" }}
                     </li>
                 {% endfor %}
             </ul>
