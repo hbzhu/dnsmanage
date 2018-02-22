@@ -13,11 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url,handler404,handler500
 from django.contrib import admin
 from accounts import views as AccoutView
 from dnspod import views as DnspodView
 from django.views.generic.base import RedirectView
+
 
 urlpatterns = [
 #    url(r'^admin/', admin.site.urls),
@@ -53,3 +54,6 @@ urlpatterns = [
 
     url(r'^dnspod/oplog/', DnspodView.Dnsoplog, name='Dnsoplog'),
 ]
+
+handler404 = AccoutView.page_not_found
+handler500 = AccoutView.page_error

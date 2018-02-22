@@ -88,12 +88,14 @@ def center(request):
     asset_type = [0, 1, 2, 3]
     op = ["新增","修改","删除","切换"]
     dict = {"新增":0,"修改":1,"删除":2,"切换":3}
-    now_time = datetime.datetime.now()
-    yes_time = now_time + datetime.timedelta(days=-1)
-    print yes_time
-    #today = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+    #now_time = datetime.datetime.now()
+    #yes_time = now_time + datetime.timedelta(days=-1)
+    #print yes_time
+    today = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+    HH=" 00:00:00"
+    today = today+HH
     try:
-        stat_obj = Dnspod_stat.objects.filter(date_time__gt=yes_time)
+        stat_obj = Dnspod_stat.objects.filter(date_time__gte=today)
         assets = Log_dnspod_config.objects.all()
         domaincount = Dnspod_domains.objects.count()
         users = User.objects.count()
@@ -413,5 +415,14 @@ def Perm_set(request,gid):
         except Exception,e:
             print e
             return render(request,'confuser/dept_permset.html',locals())
+
+
+def page_not_found(request):
+    return render(request,'404.html',locals())
+
+def page_error(request):
+    return render(request,'500.html',locals())
+
+
 
 
