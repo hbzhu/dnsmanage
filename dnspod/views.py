@@ -171,6 +171,7 @@ def DnsRecordDel(request):
 @login_required
 def LdnsRecord(request):
     #record_obj = Dnspod_records.objects.order_by('?')[:500]
+    cdn_record_obj = Dnspod_cdnrecords.objects.all()
     if request.method == 'GET':
         try:
             record_obj = Dnspod_cdnrecords.objects.raw('select a.id,a.record_id,a.record,a.record_type,a.record_value,a.record_line,a.qcloud_record,a.upyun_record,a.source_record,a.domain_id_id,a.sync_time,a.update_time,a.client_ip,b.domain from dnspod_records a ,dnspod_domains b where a.domain_id_id=b.domain_id limit 1000;')

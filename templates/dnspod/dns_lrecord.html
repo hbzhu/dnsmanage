@@ -55,6 +55,7 @@
                                     <a class="btn btn-primary btn-xs record_sw_upyun" record_id={{ item.record_id }} record_name={{ item.record }}   domain_id={{ item.domain_id_id }} record_type="CNAME" record_line={{ item.record_line }} domain={{ item.domain }} flag="upyun"><i class="glyphicon glyphicon-wrench"></i> 切换到upyun</a>
                                     <a class="btn btn-primary btn-xs record_sw_source" record_id={{ item.record_id }} record_name={{ item.record }}   domain_id={{ item.domain_id_id }} record_type="A" record_line={{ item.record_line }} domain={{ item.domain }} flag="origin"><i class="glyphicon glyphicon-wrench"></i> 切换到源服务器</a>
                                     <a href="{% url 'CDNDetail' %}?record_name={{ item.record }}&domain={{ item.domain }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-info-sign"></i> 详情</a>
+                                    <!-- <a >{{ item.record }}.{{ item.domain }}</a> -->
                                 </td>
                             </tr>
                         {% endfor %}

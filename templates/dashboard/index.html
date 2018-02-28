@@ -76,9 +76,15 @@
 
             <ul class="list-group clear-list m-t">
                 {% for data in user_top_five %}
-                    <li class="list-group-item fist-item">
+                    {% ifequal data.status 1 %}
+                    <li class="list-group-item fist-item" style="color: green">
                          {{ data.user }} {{ data.login_from }} {{ data.login_time | date:"Y-m-d H:i:s" }}
                     </li>
+                    {% else %}
+                    <li class="list-group-item fist-item" style="color: darkred" >
+                         {{ data.user }} {{ data.login_from }} {{ data.login_time | date:"Y-m-d H:i:s" }}
+                    </li>
+                    {% endifequal %}
                 {% endfor %}
             </ul>
         </div>
