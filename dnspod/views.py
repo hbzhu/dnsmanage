@@ -97,6 +97,7 @@ def DnsRecordEdit(request):
                                                        domain_record=record_name, op_type=1,
                                                        op_content=str(record_type + ',' + record_value))
                 obj.save()
+                Dnspod_records.objects.filter(record=record_name,record_id=record_id,domain_id=domain_id).update(record_type=record_type,record_line=record_line,record_value=record_value)
 
         except Exception, e:
             print e
@@ -122,10 +123,10 @@ def DnsRecordAdd(request):
             record_value = request.POST.get('record_value', '')
             record_ttl = request.POST.get('record_ttl', '')
             domain = dnsp.get_domain(domain_id)
-            status = dnsp.record_add(domain_id,record_name,record_type,record_value)
-            print domain_id,record_name,record_type,record_value
+            #record_line = record_line.encode('unicode-escape').decode('string_escape')
+            status = dnsp.record_add(domain_id,record_name,record_type,record_value,record_line)
+            #print domain_id,record_name,record_type,record_value,record_line
             status = int(status["status"]["code"])
-
             if status != 1:
                 submit_status = json.dumps(-1)
             else:
@@ -159,6 +160,7 @@ def DnsRecordDel(request):
                 del_status = json.dumps(0)
                 obj = Log_dnspod_config.objects.create(op_user=str(request.user),domain_name=domain,domain_record=record_name,op_type=2,op_content=str(record_type+','+record_value))
                 obj.save()
+                Dnspod_records.objects.filter(domain_id=domain_id,record_id=record_id).delete()
         except Exception,e:
             print e
             del_status = json.dumps(-1)
@@ -243,7 +245,7 @@ def DnsRecordSync(request):
             record = dnsp.getRecords(domain_id)
             record_lst = []
             for line in record:
-                record_lst.append(Dnspod_records(record_id=line["id"], record=line["name"], record_type=line["type"],domain_id_id=domain_id,record_value=line["value"]))
+                record_lst.append(Dnspod_records(record_id=line["id"], record=line["name"], record_type=line["type"],domain_id_id=domain_id,record_value=line["value"],record_line=line["line"]))
             Dnspod_records.objects.bulk_create(record_lst)
             status = json.dumps(0)
         except Exception,e:

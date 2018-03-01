@@ -43,7 +43,7 @@ def dnspodSync():
             record = dnsp.Get_Record(domain_id)
             record_lst = []
             for line in record:
-                record_lst.append(Dnspod_records(record_id=line["id"], record=line["name"], record_type=line["type"],domain_id_id=domain_id,record_value=line["value"]))
+                record_lst.append(Dnspod_records(record_id=line["id"], record=line["name"], record_type=line["type"],domain_id_id=domain_id,record_value=line["value"],record_line=line["line"]))
             Dnspod_records.objects.bulk_create(record_lst)
         sql = """insert into dnsmanagev2.dnspod_stat (domain,record_count)  select b.domain ,count(a.domain_id_id) as record_count from dnsmanagev2.dnspod_records a join  dnsmanagev2.dnspod_domains b  on a.domain_id_id=b.domain_id  group by a.domain_id_id;"""
         db = MysqlHandle.database()

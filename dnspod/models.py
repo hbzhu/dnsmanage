@@ -2,6 +2,7 @@
 """
 __author__ = 'Frank'
 __mtime__ = '2017/12/15'
+
 """
 from __future__ import unicode_literals
 from django.db import models

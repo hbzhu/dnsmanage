@@ -95,7 +95,7 @@ class Dnspod:
         return info["id"], info["line"], info["value"],info["type"]
 
 
-    def record_add(self,domain_id,record_name,record_type,record_value):
+    def record_add(self,domain_id,record_name,record_type,record_value,record_line):
         url = "https://dnsapi.cn/Record.Create"
         data = {
             "login_token": self.LOGIN_TOKEN,
@@ -103,7 +103,7 @@ class Dnspod:
             "domain_id": domain_id,
             "sub_domain": record_name,
             "record_type": record_type,
-            "record_line": "默认",
+            "record_line": record_line,
             "value": record_value
 
         }
