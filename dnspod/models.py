@@ -28,6 +28,10 @@ class Dnspod_domains(models.Model):
 
 
 class Dnspod_records(models.Model):
+    FLAG = (
+              (0,'禁用'),
+              (1,'启用'),
+              )
     record_id = models.IntegerField()
     client_ip = models.GenericIPAddressField(blank=True,null=True)
     record = models.CharField(max_length=64,blank=True, null=True, verbose_name=u'主机记录')
@@ -40,6 +44,7 @@ class Dnspod_records(models.Model):
     source_record = models.CharField(max_length=64, blank=True,null=True,verbose_name=u'回源地址')
     update_time = models.DateTimeField(blank=True,null=True, verbose_name=u"更新时间")
     sync_time = models.DateTimeField(auto_now_add=True, verbose_name=u"同步时间")
+    record_status = models.IntegerField(choices=FLAG,verbose_name='状态',default=1)
 
 
     def __unicode__(self):

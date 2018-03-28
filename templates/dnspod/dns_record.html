@@ -32,6 +32,7 @@
                                 <th>线路</th>
                                 <th>记录</th>
                                 <th>记录ID</th>
+                                <th>状态</th>
                                 <th>同步时间</th>
                                 <th>操作</th>
 
@@ -58,6 +59,11 @@
                                 <td>{{ item.record_line }}</td>
                                 <td>{{ item.record_value }}</td>
                                 <td>{{ item.record_id }}</td>
+                                {% if  item.record_status == 1 %}
+                                <td>启用</td>
+                                {% else %}
+                                <td>禁用</td>
+                                {% endif %}
                                 <td>{{ item.sync_time | date:"Y-m-d H:i:s" }}</td>
 
                                 <td>
@@ -65,6 +71,11 @@
                                     <!--<a href="{% url 'DnsRecordEdit' %}?record_id={{ item.id }}&record_name={{ item.name }}&record_type={{ item.type }}&record_line={{ item.line }}&record_value={{ item.value }}&record_ttl={{ item.ttl }}&domain_id={{ domain_id }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-pencil"></i> 编辑</a>-->
                                     <a href="{% url 'DnsRecordEdit' %}?record_id={{ item.record_id }}&record_name={{ item.record }}&record_type={{ item.record_type }}&record_line={{ item.record_line }}&record_value={{ item.record_value }}&domain_id={{ domain_id }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-pencil"></i> 编辑</a>
                                      <a class="btn btn-danger btn-xs record_del" record_id={{ item.record_id }} domain_id={{ domain_id }} record_name={{ item.record }} record_value={{ item.record_value }} record_type={{ item.record_type }}><i class="glyphicon glyphicon-trash"></i> 删除</a>
+                                    {% if item.record_status == 1 %}
+                                    <a class="btn btn-danger btn-xs record_stop" record_id={{ item.record_id }} domain_id={{ domain_id }} record_name={{ item.record }} record_value={{ item.record_value }} record_type={{ item.record_type }} record_line={{ item.record_line }} record_status="disable"><i class="glyphicon glyphicon-stop"></i>禁用</a>
+                                    {% else %}
+                                    <a class="btn btn-success btn-xs record_start" record_id={{ item.record_id }} domain_id={{ domain_id }} record_name={{ item.record }} record_value={{ item.record_value }} record_type={{ item.record_type }} record_line={{ item.record_line }} record_status="enable"><i class="glyphicon glyphicon-play"></i> 启用</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -113,6 +124,97 @@
                     else{
                         var err_msg = "删除失败!";
                         swal("删除失败！", err_msg, "error");
+                    }
+                }
+                });
+        });
+    });
+
+    $(".record_stop").click(function(){
+        var record_id = $(this).attr('record_id');
+        var domain_id = $(this).attr('domain_id');
+        var record_name = $(this).attr('record_name');
+        var record_type = $(this).attr('record_type');
+        var record_value = $(this).attr('record_value');
+        var record_line = $(this).attr('record_line');
+        var record_status = $(this).attr('record_status');
+         swal({
+              title: "是否禁用?",
+              text: "你确定需要禁用这个记录吗？",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Confirm",
+              closeOnConfirm: false,
+              html: false,
+            }, function(){
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'DnsRecordEstatus' %}',
+                    data:{
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'record_id': record_id,
+                        'domain_id': domain_id,
+                        'record_name': record_name,
+                        'record_type': record_type,
+                        'record_value': record_value,
+                        'record_line': record_line,
+                        'record_status': record_status
+                    },
+                    success:function(callArg){
+                    if (callArg == 0) {
+                        swal("禁用成功！", "该记录已禁用", "success");
+                        setTimeout(function(){
+                            window.location.reload()}, 1200);
+                    }
+                    else{
+                        var err_msg = "禁用失败!";
+                        swal("禁用失败！", err_msg, "error");
+                    }
+                }
+                });
+        });
+    });
+
+
+    $(".record_start").click(function(){
+        var record_id = $(this).attr('record_id');
+        var domain_id = $(this).attr('domain_id');
+        var record_name = $(this).attr('record_name');
+        var record_type = $(this).attr('record_type');
+        var record_value = $(this).attr('record_value');
+        var record_line = $(this).attr('record_line');
+        var record_status = $(this).attr('record_status');
+         swal({
+              title: "是否启用?",
+              text: "你确定需要启用这个记录吗？",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Confirm",
+              closeOnConfirm: false,
+              html: false,
+            }, function(){
+                $.ajax({
+                    type:'POST',
+                    url:'{% url 'DnsRecordEstatus' %}',
+                    data:{
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'record_id': record_id,
+                        'domain_id': domain_id,
+                        'record_name': record_name,
+                        'record_type': record_type,
+                        'record_value': record_value,
+                        'record_line': record_line,
+                        'record_status': record_status
+                    },
+                    success:function(callArg){
+                    if (callArg == 0) {
+                        swal("启用成功！", "该记录已启用", "success");
+                        setTimeout(function(){
+                            window.location.reload()}, 1200);
+                    }
+                    else{
+                        var err_msg = "启用失败!";
+                        swal("启用失败！", err_msg, "error");
                     }
                 }
                 });

@@ -43,6 +43,7 @@ urlpatterns = [
     url(r'^dnspod/dnsrecord/', DnspodView.DnsRecord, name='DnsRecord'),
     url(r'^dnspod/domlist/', DnspodView.DomLst, name='DomLst'),
     url(r'^dnspod/recordedit/', DnspodView.DnsRecordEdit, name='DnsRecordEdit'),
+    url(r'^dnspod/recordestatus/', DnspodView.DnsRecordEstatus, name='DnsRecordEstatus'),
     url(r'^dnspod/recordadd/', DnspodView.DnsRecordAdd, name='DnsRecordAdd'),
     url(r'^dnspod/recorddel/', DnspodView.DnsRecordDel, name='DnsRecordDel'),
     url(r'^dnspod/ldnsrecord/', DnspodView.LdnsRecord, name='LdnsRecord'),

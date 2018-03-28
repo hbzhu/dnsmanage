@@ -114,7 +114,7 @@ class Dnspod:
         return r.json()
 
 
-    def record_update(self,domain_id, record_name,record_id,record_value,record_line,record_type):
+    def record_update(self,domain_id, record_name,record_id,record_value,record_line,record_type,record_status="enable"):
         url = "https://dnsapi.cn/Record.Modify"
         data = {
             "login_token": self.LOGIN_TOKEN,
@@ -124,7 +124,8 @@ class Dnspod:
             "sub_domain": record_name,
             "record_line": record_line,
             "value": record_value,
-            "record_type": record_type
+            "record_type": record_type,
+            "status": record_status
         }
         try:
             r = requests.post(url, data=data, timeout=10)
