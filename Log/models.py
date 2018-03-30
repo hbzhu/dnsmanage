@@ -16,6 +16,8 @@ class Log_dnspod_config(models.Model):
               (1,'修改'),
               (2,'删除'),
               (3,'切换'),
+              (4, '禁用'),
+              (5, '启用'),
               )
     op_user = models.CharField(max_length=50,verbose_name='操作用户',default=None)
     domain_name = models.CharField(max_length=100,verbose_name='域名',default=None)
@@ -27,3 +29,6 @@ class Log_dnspod_config(models.Model):
         db_table = 'log_dnspod_operation'
         verbose_name = 'dnspod配置操作记录表'
         verbose_name_plural = 'dnspod配置操作记录表'
+
+    def __unicode__(self):
+        return self.op_user

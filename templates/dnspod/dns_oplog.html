@@ -39,6 +39,10 @@
                                  <td>删除</td>
                                 {% elif item.op_type == 3 %}
                                  <td>切换</td>
+                                {% elif item.op_type == 4 %}
+                                 <td>禁用</td>
+                                {% elif item.op_type == 5 %}
+                                 <td>启用</td>
                                 {% endif %}
                                 <td>{{ item.op_content }}</td>
                                 <td>{{ item.create_time |date:"Y-m-d H:i:s" }}</td>

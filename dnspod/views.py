@@ -119,6 +119,7 @@ def DnsRecordEstatus(request):
             record_value = request.POST.get('record_value', '')
             record_ttl = request.POST.get('record_ttl', '')
             domain_id = request.POST.get('domain_id', '')
+            domain = dnsp.get_domain(domain_id)
             record_status = request.POST.get('record_status', '')
             print domain_id, record_name, record_id, record_value, record_line, record_type,record_status
             status = dnsp.record_update(domain_id, record_name, record_id, record_value, record_line, record_type,record_status)
@@ -127,11 +128,13 @@ def DnsRecordEstatus(request):
             elif record_status == 'enable':
                 record_status = 1
             Dnspod_records.objects.filter(record=record_name,record_id=record_id,domain_id=domain_id).update(record_status=record_status)
-
-            obj = Log_dnspod_config.objects.create(op_user=str(request.user), domain_name=domain,
-                                                   domain_record=record_name, op_type=1,
-                                                   op_content=str(record_type + ',' + record_value+'启动状态: '+ record_status))
-            obj.save()
+            print request.user,domain,record_name,record_value,record_type,record_status
+            if record_status == 0:
+                obj = Log_dnspod_config.objects.create(op_user=str(request.user), domain_name=domain,domain_record=record_name, op_type=4,op_content=str(record_type + ',' + record_value))
+                obj.save()
+            elif record_status == 1:
+                obj = Log_dnspod_config.objects.create(op_user=str(request.user), domain_name=domain,domain_record=record_name, op_type=5,op_content=str(record_type + ',' + record_value))
+                obj.save()
             submit_status = json.dumps(0)
         except Exception,e:
             print e
